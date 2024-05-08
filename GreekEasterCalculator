@@ -1,0 +1,128 @@
+
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
+public class GreekEasterCalculator {
+
+        public static void main(String[] args) {
+            for (int year=2004; year<2101; year++){
+//                System.out.println("Greek Orthodox Easter in the Gregorian calendar for the year " + year + " is on " + greekEasterCalculator(year));
+                Date greekEaster = greekEasterCalculator(year);
+                Date myBday = myBDayPerYear(year);
+                if (checkIfBdCloseToEaster(myBday,greekEaster)){
+                    //System.out.println("Bday close to easter for year " + year );
+                    System.out.println("Bday is " + bdayChooser(myBday,greekEaster) + " for year " + year);
+                }
+            }
+        }
+
+    private static String bdayChooser(Date myBday, Date greekEaster) {
+        LocalDate bday = myBday.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate easter = greekEaster.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        long daysDifference = ChronoUnit.DAYS.between(easter, bday);
+        switch ((int) daysDifference) {
+            case -7:
+                return "7 days before Easter";
+            case -6:
+                return "on Great Monday";
+            case -5:
+                return "on Great Tuesday";
+            case -4:
+                return "on Great Wednesday";
+            case -3:
+                return "on Great Thursday";
+            case -2:
+                return "on Great Friday";
+            case -1:
+                return "on Great Saturday";
+            case 0:
+                return "on Easter";
+            case 1:
+                return "on Monday after Easter";
+            case 2:
+                return "on Tuesday after Easter";
+            case 3:
+                return "on Wednesday after Easter";
+            case 4:
+                return "on Thursday after Easter";
+            case 5:
+                return "on Friday after Easter";
+            case 6:
+                return "on Saturday after Easter";
+            case 7:
+                return "on Sunday after Easter";
+            default:
+                return "N/A";
+        }
+    }
+
+    private static boolean checkIfBdCloseToEaster(Date myBday, Date greekEaster) {
+        LocalDate bday = myBday.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate easter = greekEaster.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+        long daysDifference = ChronoUnit.DAYS.between(bday, easter);
+        return Math.abs(daysDifference) <= 7;
+    }
+
+    public static Date myBDayPerYear(int year){
+            GregorianCalendar myBd = new GregorianCalendar();
+            myBd.set(Calendar.YEAR, year);
+            myBd.set(Calendar.MONTH, 4 );// Month is 0-based
+            myBd.set(Calendar.DAY_OF_MONTH, 3);
+            return myBd.getTime();
+        }
+
+
+
+
+        public static Date greekEasterCalculator(int year) {
+            // Step 1: Divide the year number by 19 and define the remainder of division a.
+            int a = year % 19;
+            // Step 2: Divide the year number by 4 and define the remainder of division b.
+            int b = year % 4;
+            // Step 3: Divide the year number by 7 and define the remainder of division c.
+            int c = year % 7;
+            // Step 4: Divide the sum 19a + 15 by 30 and define the remainder d.
+            int d = (19 * a + 15) % 30;
+            // Step 5: Divide the sum 2b + 4c + 6d + 6 by 7 and define the remainder e.
+            int e = (2 * b + 4 * c + 6 * d + 6) % 7;
+            // Step 6: Define the sum f = d + e.
+            int f = d + e;
+            // Step 7: Calculate the Orthodox Easter day
+            int orthodoxEasterDay;
+            int orthodoxEasterMonth;
+            if (f <= 9) {
+                // Easter will be celebrated on March 22 + f March
+                orthodoxEasterDay = f + 22;
+                orthodoxEasterMonth = 3; // March
+            } else {
+                // Easter will be celebrated on f - April 9th
+                orthodoxEasterDay = f - 9;
+                orthodoxEasterMonth = 4; // April
+            }
+            // Step 8: For a new style conversion, move forward by 13 days in the 20th and 21st centuries
+            if (year >= 1900 && year <= 2099) {
+                orthodoxEasterDay += 13;
+            }
+            // Convert to Gregorian calendar
+            GregorianCalendar gregorianCalendar = new GregorianCalendar();
+            gregorianCalendar.set(Calendar.YEAR, year);
+            gregorianCalendar.set(Calendar.MONTH, orthodoxEasterMonth - 1); // Month is 0-based
+            gregorianCalendar.set(Calendar.DAY_OF_MONTH, orthodoxEasterDay);
+
+//            System.out.println("Greek Orthodox Easter in the Gregorian calendar for the year " + year + " is on "
+//                    + gregorianCalendar.getTime());
+        return gregorianCalendar.getTime();
+        }
+
+    }
+
+
+
+
+
+
